@@ -1,4 +1,5 @@
 import platform
+from pathlib import Path, WindowsPath #, PosixPath
 
 pyversion = platform.python_version()
 
@@ -67,16 +68,25 @@ def f2():
 
 
 def f3():
-    from vtypes import VString
+    from vtypes import VString, VPath
     from itemspecs import ItemSpec
+    from collections import namedtuple
 
     report_index_type   = VString(type=str, options=['DatetimeIndex', 'datetime', 'date_time'])
+    effective_path      = VPath(type=WindowsPath if platform.system() == 'Windows' else Path, cast=True, exist=True)
 
-    config = {'foo': ItemSpec(report_index_type, 'datetime', readonly=True)}
+    config = {'index': ItemSpec(report_index_type, 'datetime', readonly=True),
+              'current_path' : ItemSpec(effective_path, __file__)}
 
-    print(f'config[foo].vtype: {config["foo"].vtype}')
-    print(f'config[foo].value: {config["foo"].value}')
-    print(f'config[foo].readonly: {config["foo"].readonly}')
+    app_index = config["index"]
+    print(f'config[index].vtype     : {app_index.vtype}')
+    print(f'config[index].value     : {app_index.value}')
+    print(f'config[index].readonly  : {app_index.readonly}')
+
+    current_path = config["current_path"]
+
+    print(f"current path = {current_path.value}")
+    print(f"of type <{current_path.vtype}>")
 
 
 def f4():
@@ -102,9 +112,6 @@ if __name__ == "__main__":
 
     print(f"python version: {pyversion}")
 
-    try:
-        f3()
-    except Exception as e:
-        print(f"{e}")
+    f3()
     
     

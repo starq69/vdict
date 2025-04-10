@@ -2,10 +2,11 @@ from collections import namedtuple
 from typing import NamedTuple, Generic, TypeVar, Any
 
 from validation import ValidationFailed, attach_validator
-from vtypes import VGeneric
-
+from vtypes import VGeneric #, vtypes #, managed_types
 
 vtypes = TypeVar('vtypes', bound=VGeneric)
+
+
 class Variable(NamedTuple, Generic[vtypes]):
     vtype : vtypes
     value: Any
@@ -18,7 +19,7 @@ class ItemSpec(Variable):
     def __new__(cls, vtype:vtypes=None, value:Any=None, readonly:bool=False):
 
         if not isinstance(vtype, VGeneric):
-            raise ValidationFailed(f"vtype <{type(vtype)}> non valido")
+            raise ValidationFailed(f"vtype <{vtype}> non valido")
         else:
             print(f"vtype <{type(vtype)}> PASSED")
 
