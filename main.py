@@ -65,11 +65,46 @@ def f2():
     print(f'config[foo].value: {config["foo"].value}')
     print(f'config[foo].readonly: {config["foo"].readonly}')
 
+
+def f3():
+    from vtypes import VString
+    from itemspecs import ItemSpec
+
+    report_index_type   = VString(type=str, options=['DatetimeIndex', 'datetime', 'date_time'])
+
+    config = {'foo': ItemSpec(report_index_type, 'datetime', readonly=True)}
+
+    print(f'config[foo].vtype: {config["foo"].vtype}')
+    print(f'config[foo].value: {config["foo"].value}')
+    print(f'config[foo].readonly: {config["foo"].readonly}')
+
+
+def f4():
+    from collections import namedtuple
+
+    class vgeneric(namedtuple('vtype', ['type'])):
+        __slots__ = ()
+
+    class vstring(vgeneric):
+        def __new__(cls, type, options):
+            instance = super(vstring, cls).__new__(cls, type)
+            instance.options = options
+            return instance
+
+    # Esempio di utilizzo
+    v = vstring(type='example_type', options='example_options')
+    print(v.type)      # Output: example_type
+    print(v.options)   # Output: example_options
+
+
+
 if __name__ == "__main__":
 
     print(f"python version: {pyversion}")
 
     try:
-        f2()
+        f3()
     except Exception as e:
         print(f"{e}")
+    
+    
